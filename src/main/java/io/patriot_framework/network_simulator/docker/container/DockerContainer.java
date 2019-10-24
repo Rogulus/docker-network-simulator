@@ -32,6 +32,10 @@ public class DockerContainer implements Container {
     private String id;
     private DockerManager dockerManager;
 
+    /**
+     * Constructor
+     * @param id id of created container
+     */
     public DockerContainer(String id) {
         this.id = id;
     }

@@ -27,14 +27,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
+/**
+ * Implementation of Controller interface for Docker
+ */
 public class DockerController implements Controller {
     private static final Logger LOGGER = LoggerFactory.getLogger(DockerController.class);
     private DockerManager dockerManager;
 
+    /**
+     * Constructor
+     */
     public DockerController() {
         this.dockerManager = new DockerManager();
     }
@@ -42,8 +49,10 @@ public class DockerController implements Controller {
     @Override
     public void connectDeviceToNetwork(Device device, Network network) {
         stopDevice(device);
-        dockerManager.connectContainerToNetwork(getDeviceContainer(device), network);
-        dockerManager.startContainer(getDeviceContainer(device));
+        Container container = getDeviceContainer(device);
+        dockerManager.connectContainerToNetwork(container, network);
+        dockerManager.startContainer(container);
+        device.addAddressForNetwork(dockerManager.findIpAddress(container, network), network.getName());
         LOGGER.info("Container: " + device.getName() + "is connected to network: " + network.getName());
     }
 
@@ -90,7 +99,7 @@ public class DockerController implements Controller {
     }
 
     @Override
-    public void deployDevice(Device device, String tag) {
+    public void deployDevice(Device device, String tag, List<String> envVars) {
         LOGGER.info("Deploying device: " + device.getName() + " from image tag: " + tag);
         DockerContainer dockerContainer = (DockerContainer) dockerManager.createContainer(device.getName(), tag);
         dockerManager.startContainer(dockerContainer);
@@ -99,12 +108,22 @@ public class DockerController implements Controller {
     }
 
     @Override
-    public void deployDevice(Device device, String tag, String monitoringIP, int monitoringPort) {
+    public void deployDevice(Device device, String tag) {
+        deployDevice(device, tag, new ArrayList<>());
+    }
+
+    @Override
+    public void deployDevice(Device device, String tag, String monitoringIP, int monitoringPort, List<String> envVars) {
         LOGGER.info("Deploying device: " + device.getName() + " from image tag: " + tag);
         DockerContainer dockerContainer = (DockerContainer) dockerManager.createContainer(device.getName(),
-                tag, monitoringIP, monitoringPort);
+                tag, monitoringIP, monitoringPort, envVars);
         dockerManager.startContainer(dockerContainer);
         device.setIPAddress(dockerManager.findIpAddress(dockerContainer));
+    }
+
+    @Override
+    public void deployDevice(Device device, String tag, String monitoringIP, int monitoringPort) {
+        deployDevice(device, tag, monitoringIP, monitoringPort, new ArrayList<>());
     }
 
     @Override

@@ -61,14 +61,14 @@ public class DockerManager implements Manager {
 
     @Override
     public String findIpAddress(Container container, Network network) {
-        InspectContainerResponse containerResponse = dockerClient.inspectContainerCmd(container.getName()).exec();
+        InspectContainerResponse containerResponse = dockerClient.inspectContainerCmd(container.getId()).exec();
         NetworkSettings netSettings = containerResponse.getNetworkSettings();
 
         return netSettings.getNetworks().get(network.getName()).getIpAddress();
     }
 
     public String findIpAddress(Container container) {
-        InspectContainerResponse containerResponse = dockerClient.inspectContainerCmd(container.getName()).exec();
+        InspectContainerResponse containerResponse = dockerClient.inspectContainerCmd(container.getId()).exec();
         NetworkSettings netSettings = containerResponse.getNetworkSettings();
 
         return netSettings.getIpAddress();
@@ -129,23 +129,28 @@ public class DockerManager implements Manager {
      * @param name          the name
      * @param tag           the tag
      * @param elasticIP     the elastic ip
-     * @param logshtashPort the logshtash port
+     * @param logstashPort the logshtash port
      * @return the container
      */
-    public Container createContainer(String name, String tag, String elasticIP, Integer logshtashPort) {
+    public Container createContainer(String name, String tag, String elasticIP,
+                                     Integer logstashPort, List<String> environmentVariables) {
         LOGGER.info("Starting creating container with elastic hook: " + elasticIP);
         Map<String, String> gelfProps = new HashMap<>();
-        gelfProps.put("gelf-address", "udp://" + elasticIP + ":" + logshtashPort);
+        gelfProps.put("gelf-address", "udp://" + elasticIP + ":" + logstashPort);
         LogConfig gelfLog = new LogConfig(LogConfig.LoggingType.GELF, gelfProps);
         CreateContainerResponse containerResponse = dockerClient.createContainerCmd(tag)
                 .withHostConfig(new HostConfig()
                     .withCapAdd(Capability.NET_ADMIN)
                     .withLogConfig(gelfLog)
                 )
+                .withEnv(environmentVariables)
                 .withName(name)
                 .exec();
         LOGGER.info("Container created with id: " + containerResponse.getId());
         return new DockerContainer(name, containerResponse.getId(), new DockerManager());
+    }
+    public Container createContainer(String name, String tag, String elasticIP, Integer logshtashPort) {
+        return createContainer(name, tag, elasticIP, logshtashPort, new ArrayList<>());
     }
 
     @Override
@@ -285,13 +290,13 @@ public class DockerManager implements Manager {
     }
 
     public String getGatewayIP(Container container) {
-        String ip = dockerClient.inspectContainerCmd(container.getName())
+        String ip = dockerClient.inspectContainerCmd(container.getId())
                 .withContainerId(container.getId()).exec().getNetworkSettings().getGateway();
         return ip;
     }
 
     public String getDefaultGwNetworkIp(Container container) {
-        String ip = dockerClient.inspectContainerCmd(container.getName())
+        String ip = dockerClient.inspectContainerCmd(container.getId())
                 .withContainerId(container.getId()).exec().getNetworkSettings().getGateway();
         int mask = getDefaultGwNetworkMask(container);
         return convertToNetworkIp(ip, mask);

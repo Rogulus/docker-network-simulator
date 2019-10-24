@@ -18,11 +18,17 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
    <modelVersion>4.0.0</modelVersion>
 
-    <groupId>io.patriot-framework</groupId>
-    <artifactId>docker-network-simulator</artifactId>
-    <version>2.0.0-SNAPSHOT</version>
+   <groupId>io.patriot-framework</groupId>
+   <artifactId>docker-network-simulator</artifactId>
+   <version>2.0.0-SNAPSHOT</version>
 
    <name>Docker controller for simulation</name>
+   <description>
+      Project is part of PatrIoT framework and is used as implementation of simulation
+      API for Docker.
+   </description>
+   <url>https://patriot-framework.io</url>
+
    <licenses>
       <license>
          <name>Apache License, Version 2.0</name>
@@ -124,11 +130,12 @@
    <properties>
       <org.junit.platform.version>1.3.0</org.junit.platform.version>
       <org.junit.jupiter.version>5.4.0</org.junit.jupiter.version>
-      <maven-surefire-plugin.version>2.21.0</maven-surefire-plugin.version>
+      <maven-surefire-plugin.version>3.0.0-M1</maven-surefire-plugin.version>
       <org.java-docker.version>3.1.2</org.java-docker.version>
       <org.slf4j.version>1.7.5</org.slf4j.version>
       <org.codehouse.mojo.version>1.6.0</org.codehouse.mojo.version>
       <org.args4j.version>2.33</org.args4j.version>
+      <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
    </properties>
 
    <build>
@@ -138,25 +145,13 @@
             <artifactId>maven-compiler-plugin</artifactId>
             <version>3.7.0</version>
             <configuration>
-               <source>11</source>
-               <target>11</target>
+               <source>8</source>
+               <target>8</target>
             </configuration>
          </plugin>
           <plugin>
             <artifactId>maven-surefire-plugin</artifactId>
             <version>${maven-surefire-plugin.version}</version>
-            <dependencies>
-               <dependency>
-                  <groupId>org.junit.platform</groupId>
-                  <artifactId>junit-platform-surefire-provider</artifactId>
-                  <version>${org.junit.platform.version}</version>
-               </dependency>
-               <dependency>
-                  <groupId>org.junit.jupiter</groupId>
-                  <artifactId>junit-jupiter-engine</artifactId>
-                  <version>${org.junit.jupiter.version}</version>
-               </dependency>
-            </dependencies>
          </plugin>
          <plugin>
             <groupId>org.codehaus.mojo</groupId>
@@ -210,7 +205,7 @@
       </dependency>
       <dependency>
          <groupId>org.junit.jupiter</groupId>
-         <artifactId>junit-jupiter-api</artifactId>
+         <artifactId>junit-jupiter</artifactId>
          <version>${org.junit.jupiter.version}</version>
          <scope>test</scope>
       </dependency>
@@ -242,7 +237,7 @@
       <dependency>
          <groupId>io.patriot-framework</groupId>
          <artifactId>patriot-api</artifactId>
-         <version>1.1.0</version>
+         <version>2.0.0-SNAPSHOT</version>
       </dependency>
    </dependencies>
    <profiles>
@@ -256,9 +251,6 @@
                <plugin>
                   <groupId>org.apache.maven.plugins</groupId>
                   <artifactId>maven-javadoc-plugin</artifactId>
-                  <configuration>
-                     <version>11</version>
-                  </configuration>
                   <executions>
                      <execution>
                         <id>attach-javadocs</id>
@@ -277,6 +269,18 @@
                         <phase>verify</phase>
                         <goals>
                            <goal>sign</goal>
+                        </goals>
+                     </execution>
+                  </executions>
+               </plugin>
+               <plugin>
+                  <groupId>org.apache.maven.plugins</groupId>
+                  <artifactId>maven-source-plugin</artifactId>
+                  <executions>
+                     <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                           <goal>jar</goal>
                         </goals>
                      </execution>
                   </executions>
