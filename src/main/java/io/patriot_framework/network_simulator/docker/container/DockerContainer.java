@@ -146,6 +146,11 @@ public class DockerContainer implements Container {
         dockerManager.destroyContainer(this);
     }
 
+    @Override
+    public void startContainer() {
+        dockerManager.startContainer(this);
+    }
+
     /**
      * Method gathers ip of container's gateway.
      *
