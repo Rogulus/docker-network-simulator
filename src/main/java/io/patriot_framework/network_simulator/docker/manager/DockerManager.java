@@ -40,11 +40,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
@@ -56,8 +58,17 @@ public class DockerManager implements Manager {
 
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DockerManager.class);
-    private DockerClient dockerClient = DockerClientBuilder.
-            getInstance(DefaultDockerClientConfig.createDefaultConfigBuilder().build()).build();
+    private final DockerClient dockerClient;
+    private final URI host;
+
+    public DockerManager(DefaultDockerClientConfig config) {
+        this.dockerClient = DockerClientBuilder.getInstance(config).build();
+        this.host = config.getDockerHost();
+    }
+
+    public DockerManager() {
+        this(DefaultDockerClientConfig.createDefaultConfigBuilder().build());
+    }
 
     @Override
     public String findIpAddress(Container container, Network network) {
@@ -83,6 +94,12 @@ public class DockerManager implements Manager {
     public void deleteImage(String tag) {
         dockerClient.removeImageCmd(tag).exec();
     }
+
+    @Override
+    public URI getHost() {
+        return this.host;
+    }
+
 
     @Override
     public Container createContainer(String name, String tag) {
@@ -126,10 +143,11 @@ public class DockerManager implements Manager {
     /**
      * Create container container with elastic log hook.
      *
-     * @param name          the name
-     * @param tag           the tag
-     * @param elasticIP     the elastic ip
-     * @param logstashPort the logshtash port
+     * @param name                  the name
+     * @param tag                   the tag
+     * @param elasticIP             the elastic ip
+     * @param logstashPort          the logshtash port
+     * @param environmentVariables  environments variables to add to the new container
      * @return the container
      */
     public Container createContainer(String name, String tag, String elasticIP,
@@ -371,5 +389,23 @@ public class DockerManager implements Manager {
         this.runCommand(container, "ip route del default");
     }
 
+    /**
+     * @return Pure DockerClient
+     */
+    public DockerClient client() {
+        return this.dockerClient;
+    }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof DockerManager)) return false;
+        DockerManager that = (DockerManager) o;
+        return getHost().equals(that.getHost());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getHost());
+    }
 }

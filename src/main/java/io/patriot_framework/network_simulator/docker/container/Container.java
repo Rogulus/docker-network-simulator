@@ -65,4 +65,9 @@ public interface Container {
      */
     void destroyContainer();
 
+    /**
+     * Start container.
+     */
+    void startContainer();
+
 }

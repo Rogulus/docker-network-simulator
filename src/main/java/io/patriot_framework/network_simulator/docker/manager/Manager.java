@@ -20,6 +20,7 @@ import io.patriot_framework.network.simulator.api.model.network.Network;
 import io.patriot_framework.network_simulator.docker.container.Container;
 
 import java.io.File;
+import java.net.URI;
 import java.util.List;
 import java.util.Set;
 
@@ -79,15 +80,15 @@ public interface Manager {
     /**
      * Method stops container.
      *
-     * @param container
+     * @param container the container
      */
     void killContainer(Container container);
 
     /**
      * Disconnects container from network.
      *
-     * @param container
-     * @param network
+     * @param container the container
+     * @param network   the network
      */
     void disconnectContainer(Container container, Network network);
 
@@ -135,4 +136,8 @@ public interface Manager {
      */
     void deleteImage(String tag);
 
+    /**
+     * @return URI of the host running the manager
+     */
+    URI getHost();
 }
