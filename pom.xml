@@ -129,11 +129,11 @@
    </distributionManagement>
    <properties>
       <org.junit.platform.version>1.3.0</org.junit.platform.version>
-      <org.junit.jupiter.version>5.4.0</org.junit.jupiter.version>
-      <maven-surefire-plugin.version>3.0.0-M1</maven-surefire-plugin.version>
-      <org.java-docker.version>3.2.7</org.java-docker.version>
-      <org.slf4j.version>1.7.5</org.slf4j.version>
-      <org.codehouse.mojo.version>1.6.0</org.codehouse.mojo.version>
+      <org.junit.jupiter.version>5.9.2</org.junit.jupiter.version>
+      <maven-surefire-plugin.version>3.0.0-M8</maven-surefire-plugin.version>
+      <com.github.docker-java.version>3.2.14</com.github.docker-java.version>
+      <org.slf4j.version>2.0.6</org.slf4j.version>
+      <org.codehouse.mojo.version>3.1.0</org.codehouse.mojo.version>
       <org.args4j.version>2.33</org.args4j.version>
       <org.etcd4j.version>2.18.0</org.etcd4j.version>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -173,7 +173,7 @@
       <plugin>
          <groupId>org.apache.maven.plugins</groupId>
          <artifactId>maven-checkstyle-plugin</artifactId>
-         <version>3.0.0</version>
+         <version>3.1.0</version>
          <executions>
             <execution>
                <id>validate</id>
@@ -202,7 +202,7 @@
       <dependency>
          <groupId>com.github.docker-java</groupId>
          <artifactId>docker-java</artifactId>
-         <version>${org.java-docker.version}</version>
+         <version>${com.github.docker-java.version}</version>
       </dependency>
       <dependency>
          <groupId>org.junit.jupiter</groupId>
@@ -223,12 +223,12 @@
       <dependency>
          <groupId>com.sun.xml.bind</groupId>
          <artifactId>jaxb-core</artifactId>
-         <version>2.3.0.1</version>
+         <version>4.0.1</version>
       </dependency>
       <dependency>
          <groupId>com.sun.xml.bind</groupId>
          <artifactId>jaxb-impl</artifactId>
-         <version>2.3.3</version>
+         <version>4.0.1</version>
       </dependency>
 
       <dependency>
@@ -248,6 +248,19 @@
          <artifactId>jackson-databind</artifactId>
          <version>2.10.2</version>
       </dependency>
+      <!--Removes vulnerability from dependency of etc4j-->
+      <dependency>
+         <groupId>io.netty</groupId>
+         <artifactId>netty-codec-http</artifactId>
+         <version>4.1.87.Final</version>
+      </dependency>
+      <!--Removes vulnerability from dependency of etc4j-->
+      <dependency>
+         <groupId>io.netty</groupId>
+         <artifactId>netty-handler</artifactId>
+         <version>4.1.87.Final</version>
+      </dependency>
+      <!--Todo: after bump of patriot-api bump also version of jackson-databind-->
       <dependency>
          <groupId>io.patriot-framework</groupId>
          <artifactId>patriot-api</artifactId>
